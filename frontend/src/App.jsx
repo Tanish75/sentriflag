@@ -1,6 +1,6 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
-import { initFlagsmith, getVal, hasFlag } from "./lib/flagsmithClient";
+import { initFlagsmith, refreshFlags, getVal, hasFlag, getFlagCount } from "./lib/flagsmithClient";
 import Navbar from "./components/Navbar";
 import KillSwitchBanner from "./components/KillSwitchBanner";
 import Home from "./pages/Home";
@@ -30,6 +30,7 @@ export default function App() {
     variantBGuardrail: "zero_trust",
     activeModel: "gpt-4o-mini",
     jailbreakSensitivity: 0.7,
+    flagCount: 0,
   });
 
   function readFlags() {
@@ -39,6 +40,7 @@ export default function App() {
       variantBGuardrail: getVal("variant_b_guardrail", "zero_trust"),
       activeModel: getVal("active_model", "gpt-4o-mini"),
       jailbreakSensitivity: parseFloat(getVal("jailbreak_sensitivity", "0.7")),
+      flagCount: getFlagCount(),
     });
   }
 
@@ -62,7 +64,15 @@ export default function App() {
         setReady(true);
       });
 
-    return () => clearTimeout(timer);
+    // Live polling every 3 seconds so Flagsmith changes reflect immediately without reload
+    const poll = setInterval(() => {
+      refreshFlags().then(() => readFlags());
+    }, 3000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(poll);
+    };
   }, []);
 
   if (!ready) return <LoadingScreen />;

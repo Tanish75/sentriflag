@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useFlagsmith } from "../App";
-import { getVal, hasFlag } from "../lib/flagsmithClient";
+import { getVal, hasFlag, refreshFlags } from "../lib/flagsmithClient";
 import { ExternalLink, RefreshCw, Flag } from "lucide-react";
 
 const FLAG_DEFINITIONS = [
@@ -67,11 +67,12 @@ export default function FlagDashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  function manualRefresh() {
+  async function manualRefresh() {
     setRefreshing(true);
+    await refreshFlags();
     setLiveValues(readAllFlags());
     setLastRefresh(new Date());
-    setTimeout(() => setRefreshing(false), 400);
+    setRefreshing(false);
   }
 
   const displayValues = liveValues || {
