@@ -4,7 +4,8 @@
 
 SentriFlag lets you run live A/B experiments on AI agent security policies — controlled entirely by Flagsmith feature flags. Fire jailbreak attacks, prompt injections, and PII extraction attempts at two agent variants simultaneously, and watch how different guardrail levels (controlled by Flagsmith remote config) handle them. Flip the emergency kill switch in Flagsmith and both agents go offline instantly — no redeployment.
 
-> Built for the WeMakeDevs × Flagsmith "Toggle Wars" Hackathon
+> Built for the WeMakeDevs × Flagsmith "Toggle Wars" Hackathon  
+> **Live Demo:** [https://tanish75.github.io/sentriflag/](https://tanish75.github.io/sentriflag/)
 
 ---
 
