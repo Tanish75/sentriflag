@@ -3,26 +3,26 @@ import { motion } from "framer-motion";
 import { Shield, Zap, GitBranch, Flag, ChevronRight, Terminal, AlertTriangle, Lock } from "lucide-react";
 
 const STAT_CARDS = [
-  { icon: "⚡", label: "Attack Vectors", value: "5", desc: "Jailbreak, Injection, PII & more" },
-  { icon: "🛡️", label: "Guardrail Levels", value: "3", desc: "Permissive → Moderate → Zero-Trust" },
-  { icon: "🔴", label: "Kill Switches", value: "1", desc: "Instant via Flagsmith boolean flag" },
+  { icon: "⚡", label: "Attack Vectors", value: "5", desc: "Jailbreaks, Injections, & PII leaks" },
+  { icon: "🛡️", label: "Guardrail Levels", value: "3", desc: "Permissive, Moderate, Zero-Trust" },
+  { icon: "🔴", label: "Circuit Breakers", value: "1", desc: "Instant Flagsmith-driven kill switch" },
 ];
 
 const HOW_IT_WORKS = [
   {
     icon: <Flag size={20} className="text-amber-400" />,
-    title: "Flagsmith controls everything",
-    desc: "Each guardrail level, model name, and kill switch is a live Flagsmith feature flag. Change the flag → behavior changes instantly with no redeployment.",
+    title: "Decoupled Policy Engine",
+    desc: "Guardrail postures, model endpoints, and sensitivity levels are evaluated at runtime via Flagsmith. Update security policies instantly without pipeline redeployments.",
   },
   {
     icon: <GitBranch size={20} className="text-purple-400" />,
-    title: "A/B variant experiments",
-    desc: "Variant A runs with one guardrail policy, Variant B runs with another — both controlled by separate Flagsmith remote config values. Watch how the same attack fares differently.",
+    title: "Adversarial A/B Benchmarking",
+    desc: "Evaluate opposing defense strategies concurrently against identical payloads. Compare block rates, false positive trade-offs, and inference latencies side-by-side.",
   },
   {
     icon: <Terminal size={20} className="text-emerald-400" />,
-    title: "Real threat detection",
-    desc: "Five threat classifiers detect jailbreak attempts, system prompt extraction, PII requests, SQL injection, and prompt injection — without any external API.",
+    title: "Multi-Vector Threat Detection",
+    desc: "Deterministic classifiers isolate DAN jailbreaks, hidden prompt extraction, credential leaks, and SQL injection patterns before payloads reach model execution.",
   },
 ];
 
@@ -46,21 +46,21 @@ export default function Home() {
         <div className="text-center mb-14">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-medium mb-6">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            Flagsmith Hackathon Demo
+            Runtime Security Control Plane
           </div>
 
           <h1 className="text-5xl font-bold tracking-tight text-white mb-4 leading-tight">
-            AI Agent Security
+            AI Agent Guardrail
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-amber-400">
-              Experimentation
+              Policy Orchestration
             </span>
           </h1>
 
           <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed mb-8">
-            Put two guardrail strategies head-to-head. Watch{" "}
-            <span className="text-white font-medium">Flagsmith</span> decide who survives a
-            prompt injection attack — in real time.
+            Stress-test defensive postures against real-time jailbreaks and prompt injections.
+            Dynamically adjust security policies and trigger emergency circuit breakers via{" "}
+            <span className="text-white font-medium">Flagsmith</span> feature flags.
           </p>
 
           <div className="flex items-center justify-center gap-3">
@@ -122,18 +122,18 @@ export default function Home() {
         </div>
       </FadeIn>
 
-      {/* Flagsmith litmus test */}
+      {/* Architectural Overview */}
       <FadeIn delay={0.3}>
         <div className="bg-gradient-to-br from-slate-900 to-red-950/20 border border-red-900/30 rounded-xl p-6">
           <div className="flex items-start gap-3">
-            <AlertTriangle size={18} className="text-red-400 mt-0.5 shrink-0" />
+            <Lock size={18} className="text-red-400 mt-0.5 shrink-0" />
             <div>
-              <h3 className="text-white font-semibold mb-1">The Flagsmith Litmus Test</h3>
+              <h3 className="text-white font-semibold mb-1">Architecture: Deep Flagsmith Integration</h3>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Remove Flagsmith from this app and{" "}
-                <span className="text-red-400 font-medium">the core functionality breaks</span>.
-                Guardrail levels revert to hardcoded defaults, the kill switch stops working, and
-                A/B experiment control is gone. Flagsmith is the control plane — not an add-on.
+                Flagsmith operates as the central control plane for SentriFlag. Runtime security tiers,
+                heuristic sensitivity thresholds, and emergency circuit breakers are evaluated continuously
+                through the client SDK. Decoupling policy enforcement from code deployment enables security teams
+                to respond to zero-day threat patterns in milliseconds.
               </p>
             </div>
           </div>

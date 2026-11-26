@@ -153,9 +153,9 @@ export default function AgentPanel({
       {/* Emergency overlay */}
       {emergencyShutdown && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-sm rounded-xl">
-          <AlertOctagon size={40} className="text-slate-500 mb-3" />
-          <p className="text-slate-400 font-semibold">OFFLINE</p>
-          <p className="text-slate-600 text-xs mt-1">Emergency shutdown active</p>
+          <AlertOctagon size={40} className="text-red-500 mb-3 animate-pulse" />
+          <p className="text-red-400 font-semibold tracking-wide">CIRCUIT BREAKER ENGAGED</p>
+          <p className="text-slate-500 text-xs mt-1">Agent execution halted via Flagsmith kill switch</p>
         </div>
       )}
 
@@ -189,7 +189,8 @@ export default function AgentPanel({
         {messages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center gap-2 text-center px-6">
             <Shield size={28} className="text-slate-700" />
-            <p className="text-slate-500 text-sm">Send a prompt or use an attack preset below</p>
+            <p className="text-slate-400 text-sm font-medium">Awaiting payload dispatch</p>
+            <p className="text-slate-500 text-xs">Select an adversarial preset below or transmit a custom payload</p>
             <p className="text-slate-600 text-xs">
               Guardrail:{" "}
               <span className="font-mono text-slate-500">{guardrailLevel}</span>

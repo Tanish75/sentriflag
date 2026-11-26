@@ -159,9 +159,9 @@ export default function FlagDashboard() {
       {/* Header */}
       <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-1">Flag Dashboard</h1>
+          <h1 className="text-2xl font-bold text-white mb-1">Control Plane Observability</h1>
           <p className="text-slate-400 text-sm">
-            Live Flagsmith feature flag values — updates every 3 seconds
+            Real-time state synchronization with Flagsmith feature registry
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -192,7 +192,7 @@ export default function FlagDashboard() {
       <div className="flex items-center gap-2 mb-6">
         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
         <span className="text-xs text-slate-400">
-          Polling Flagsmith SDK — changes in Flagsmith dashboard reflect here within seconds
+          Active Flagsmith client subscription: Remote updates synchronize with zero client reload
         </span>
       </div>
 
@@ -211,20 +211,20 @@ export default function FlagDashboard() {
       {/* Footer note */}
       <div className="mt-8 p-4 rounded-xl bg-slate-900/50 border border-slate-800">
         <p className="text-slate-400 text-xs leading-relaxed text-center">
-          💡 Modify any of these flags in the{" "}
+          Configuration adjustments made within the{" "}
           <a
             href="https://app.flagsmith.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-amber-400 hover:underline"
           >
-            Flagsmith dashboard
+            Flagsmith Console
           </a>{" "}
-          to see instant behavior changes in the{" "}
-          <a href="/arena" className="text-red-400 hover:underline">
-            Arena
-          </a>
-          . No redeployment needed.
+          propagate to live evaluation pipelines instantly, adjusting security postures in the{" "}
+          <a href="#/arena" className="text-red-400 hover:underline">
+            Security Arena
+          </a>{" "}
+          without application recompilation or redeployment.
         </p>
       </div>
     </div>

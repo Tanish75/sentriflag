@@ -24,7 +24,7 @@ export default function KillSwitchBanner() {
         </motion.div>
 
         <span className="text-red-100 text-sm font-semibold tracking-wide">
-          🔴 EMERGENCY SHUTDOWN ACTIVE — All AI Agents Offline
+          🔴 EMERGENCY CIRCUIT BREAKER ENGAGED — Agent Pipelines Quarantined
         </span>
 
         <span className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded bg-red-900/50 border border-red-700/50 text-xs font-mono text-red-300">

@@ -69,10 +69,10 @@ export default function MetricsPanel({ metricsA, metricsB }) {
     <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4">
       <div className="flex items-center gap-2 mb-4">
         <Activity size={16} className="text-slate-400" />
-        <h3 className="text-sm font-semibold text-white">Live Metrics</h3>
+        <h3 className="text-sm font-semibold text-white">Evaluation Telemetry</h3>
         <span className="ml-auto flex items-center gap-1 text-xs text-slate-500">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          live
+          streaming
         </span>
       </div>
 

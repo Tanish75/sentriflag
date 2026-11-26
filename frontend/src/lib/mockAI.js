@@ -2,20 +2,20 @@
 // Simulates AI agent responses controlled by Flagsmith guardrail levels
 
 const SAFE_RESPONSES = [
-  "Sure! Here's a helpful summary of that topic. The key points to consider are clarity, structure, and actionable insights.",
-  "Great question. Based on best practices, the recommended approach involves breaking the problem into smaller components and addressing each systematically.",
-  "I can help with that. The most effective strategy here is to first define your goals, then map out the steps, and iterate based on feedback.",
-  "Absolutely. This is a well-studied area. The consensus approach involves a combination of documentation, testing, and continuous monitoring.",
-  "Here's what I found on that: the standard pattern is to validate inputs, process with a defined pipeline, and return structured output.",
-  "That's a solid use case. The recommended implementation follows a three-layer architecture: input validation, processing logic, and output formatting.",
+  "Session state has been synchronized across distributed worker nodes. Partition latency is currently tracking at 14ms.",
+  "Payload schema validated against system requirements. All downstream microservice bindings returned status 200 OK.",
+  "Vector similarity search completed across active embeddings index with cosine distance metrics within normal bounds.",
+  "To implement token rotation securely, configure short-lived access tokens via HTTP-only cookies with SameSite=Strict.",
+  "Authentication context verified. Role-based access control policies allow standard query execution for this scope.",
+  "Database query plan analyzed. Parameterized execution avoids table scans and utilizes composite index on primary keys.",
 ];
 
 const KEYWORD_RESPONSES = {
-  code: "Here's a code snippet to get you started:\n```\nfunction process(input) {\n  return input.trim().toLowerCase();\n}\n```\nThis handles basic input normalization.",
-  api: "To interact with an API: use fetch() with proper headers, handle errors with try/catch, and always validate the response schema.",
-  deploy: "Deployment best practices: containerize with Docker, use CI/CD pipelines, enable health checks, and always have a rollback strategy.",
-  security: "Security fundamentals: validate all inputs, use HTTPS, implement rate limiting, rotate credentials regularly, and audit logs.",
-  database: "For database operations: use parameterized queries to prevent injection, implement connection pooling, and always have backup strategies.",
+  code: "Implementation reference:\n```javascript\nexport function sanitizeInput(payload) {\n  return payload.replace(/[<>{}\\[\\]\\\\]/g, '').trim();\n}\n```\nThis strips structural injection characters before parsing.",
+  api: "Endpoint specifications: Enforce Bearer token verification, return standard RFC 7807 problem details on failure, and configure rate-limiting per client IP.",
+  deploy: "Production deployment guidelines: Run automated container vulnerability scans, require signed commits, and verify blue/green rollback triggers.",
+  security: "Zero-trust checklist: Verify cryptographic signatures on tokens, enforce strict CSP headers, and decouple runtime guardrails via Flagsmith remote flags.",
+  database: "SQL security best practice: Always bind query parameters through prepared statements; never concatenate raw user input into executable strings.",
 };
 
 function pickSafeResponse(prompt) {
@@ -44,16 +44,16 @@ function getBlockedMessage(guardrailLevel, threats) {
 
   switch (guardrailLevel) {
     case "permissive":
-      return `⚠️ Proceeding with caution — potential concerns detected (${threatList}). Response may be incomplete for safety.`;
+      return `⚠️ Advisory: Low-severity threat indicators detected [${threatList}]. Request allowed with telemetry logging.`;
 
     case "moderate":
-      return `🛡️ Request flagged by guardrail policy.\n\nDetected threat vector: **${threatList}**\n\nThis request was blocked by the Moderate security policy. Modify your prompt and retry.`;
+      return `🛡️ Request Intercepted: Moderate Policy Violation\n\nIdentified Vector: [${threatList}]\nAction: Pipeline execution terminated. Heuristic score exceeded threshold.`;
 
     case "zero_trust":
-      return `🔴 BLOCKED — Zero-Trust Security Layer\n\nThreat Classification: ${threatList}\n\nAll requests matching threat patterns are automatically rejected under Zero-Trust policy. This incident has been logged.\n\n[Flagsmith flag: variant_b_guardrail = zero_trust]`;
+      return `🔴 ACCESS DENIED: Zero-Trust Policy Enforcement\n\nClassification: [${threatList}]\nStatus: Payload quarantined. Security incident logged.\nFlagsmith Active Posture: variant_b_guardrail = zero_trust`;
 
     default:
-      return "Request could not be processed due to security policy.";
+      return "Request terminated under active security policy.";
   }
 }
 

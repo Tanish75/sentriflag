@@ -7,8 +7,8 @@ export default function Navbar() {
   const { emergencyShutdown } = useFlagsmith();
 
   const navLinks = [
-    { to: "/", label: "Home" },
-    { to: "/dashboard", label: "Flag Dashboard" },
+    { to: "/", label: "Overview" },
+    { to: "/dashboard", label: "Control Plane" },
   ];
 
   return (
@@ -59,7 +59,7 @@ export default function Navbar() {
             className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-400 hover:text-white hover:border-slate-500 transition-all group"
           >
             <Zap size={11} className="text-amber-400" />
-            Powered by Flagsmith
+            Flagsmith Active
             <ExternalLink size={10} className="opacity-50 group-hover:opacity-100" />
           </a>
 

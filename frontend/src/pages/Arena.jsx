@@ -59,7 +59,7 @@ export default function Arena() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-bold text-white">Security Arena</h1>
-          <p className="text-slate-500 text-xs mt-0.5">Live A/B guardrail experiment — controlled by Flagsmith</p>
+          <p className="text-slate-500 text-xs mt-0.5">Concurrent Red-Team Arena & Policy Benchmark</p>
         </div>
 
         {/* Live flag pills */}
