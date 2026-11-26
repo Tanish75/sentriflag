@@ -1,5 +1,5 @@
 import { useState, useEffect, createContext, useContext } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { initFlagsmith, getVal, hasFlag } from "./lib/flagsmithClient";
 import Navbar from "./components/Navbar";
 import KillSwitchBanner from "./components/KillSwitchBanner";
