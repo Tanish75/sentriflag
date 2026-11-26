@@ -1,53 +1,17 @@
-import { TrendingDown, TrendingUp, Activity } from "lucide-react";
+import { BarChart2 } from "lucide-react";
 
-function StatCard({ label, value, sub, color = "slate" }) {
-  const colorMap = {
-    amber: "text-amber-400",
-    red: "text-red-400",
-    emerald: "text-emerald-400",
-    slate: "text-slate-300",
+function StatBox({ label, value, highlight = "default" }) {
+  const styles = {
+    default: "text-slate-900",
+    amber: "text-amber-700",
+    red: "text-[#d13212]",
+    emerald: "text-emerald-700",
   };
 
   return (
-    <div className="bg-slate-800/50 rounded-lg px-3 py-2.5 text-center">
-      <p className={`text-lg font-bold font-mono ${colorMap[color]}`}>{value}</p>
-      <p className="text-slate-400 text-xs mt-0.5">{label}</p>
-      {sub && <p className="text-slate-600 text-xs">{sub}</p>}
-    </div>
-  );
-}
-
-function BarComparison({ labelA, labelB, valueA, valueB, unit = "" }) {
-  const max = Math.max(valueA, valueB, 1);
-  const pctA = (valueA / max) * 100;
-  const pctB = (valueB / max) * 100;
-
-  return (
-    <div className="space-y-1.5">
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-amber-400 w-4">A</span>
-        <div className="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden">
-          <div
-            className="h-full bg-amber-500/70 rounded-full transition-all duration-500"
-            style={{ width: `${pctA}%` }}
-          />
-        </div>
-        <span className="text-xs text-slate-400 w-16 text-right font-mono">
-          {valueA}{unit}
-        </span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span className="text-xs text-red-400 w-4">B</span>
-        <div className="flex-1 bg-slate-800 rounded-full h-2 overflow-hidden">
-          <div
-            className="h-full bg-red-500/70 rounded-full transition-all duration-500"
-            style={{ width: `${pctB}%` }}
-          />
-        </div>
-        <span className="text-xs text-slate-400 w-16 text-right font-mono">
-          {valueB}{unit}
-        </span>
-      </div>
+    <div className="bg-slate-50 border border-slate-200 rounded px-3 py-2">
+      <p className="text-[11px] font-medium text-slate-500 uppercase tracking-wider">{label}</p>
+      <p className={`text-base font-semibold font-mono mt-0.5 ${styles[highlight]}`}>{value}</p>
     </div>
   );
 }
@@ -62,62 +26,55 @@ export default function MetricsPanel({ metricsA, metricsB }) {
       ? Math.round((metricsB.blockedCount / metricsB.totalRequests) * 100)
       : 0;
 
-  const safetyA = blockRateA;
-  const safetyB = blockRateB;
-
   return (
-    <div className="bg-slate-900/50 border border-slate-800 rounded-xl p-4">
-      <div className="flex items-center gap-2 mb-4">
-        <Activity size={16} className="text-slate-400" />
-        <h3 className="text-sm font-semibold text-white">Evaluation Telemetry</h3>
-        <span className="ml-auto flex items-center gap-1 text-xs text-slate-500">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          streaming
-        </span>
+    <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <BarChart2 size={15} className="text-slate-600" />
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-700">
+            Session Telemetry
+          </h3>
+        </div>
+        <span className="text-[11px] text-slate-500 font-mono">Real-time comparison</span>
       </div>
 
-      {/* Quick stats */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Variant A Stats */}
         <div className="space-y-2">
-          <p className="text-xs text-amber-400 font-semibold uppercase tracking-wide">Variant A</p>
-          <div className="grid grid-cols-2 gap-2">
-            <StatCard label="Requests" value={metricsA.totalRequests} />
-            <StatCard label="Blocked" value={metricsA.blockedCount} color="amber" />
-            <StatCard label="Block Rate" value={`${blockRateA}%`} color={blockRateA > 50 ? "emerald" : "amber"} />
-            <StatCard label="Avg Latency" value={`${metricsA.avgLatency}ms`} />
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-800">Variant A</span>
+            <span className="text-[11px] font-mono text-slate-500">
+              {metricsA.blockedCount}/{metricsA.totalRequests} blocked
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <StatBox label="Requests" value={metricsA.totalRequests} />
+            <StatBox
+              label="Block Rate"
+              value={`${blockRateA}%`}
+              highlight={blockRateA >= 50 ? "emerald" : "amber"}
+            />
+            <StatBox label="Avg Latency" value={`${metricsA.avgLatency}ms`} />
           </div>
         </div>
-        <div className="space-y-2">
-          <p className="text-xs text-red-400 font-semibold uppercase tracking-wide">Variant B</p>
-          <div className="grid grid-cols-2 gap-2">
-            <StatCard label="Requests" value={metricsB.totalRequests} />
-            <StatCard label="Blocked" value={metricsB.blockedCount} color="red" />
-            <StatCard label="Block Rate" value={`${blockRateB}%`} color={blockRateB > 50 ? "emerald" : "red"} />
-            <StatCard label="Avg Latency" value={`${metricsB.avgLatency}ms`} />
-          </div>
-        </div>
-      </div>
 
-      {/* Bar comparisons */}
-      <div className="space-y-3 pt-3 border-t border-slate-800">
-        <div>
-          <p className="text-xs text-slate-500 mb-1.5">Total Requests</p>
-          <BarComparison
-            valueA={metricsA.totalRequests}
-            valueB={metricsB.totalRequests}
-          />
-        </div>
-        <div>
-          <p className="text-xs text-slate-500 mb-1.5">Block Rate</p>
-          <BarComparison valueA={blockRateA} valueB={blockRateB} unit="%" />
-        </div>
-        <div>
-          <p className="text-xs text-slate-500 mb-1.5">Avg Latency</p>
-          <BarComparison
-            valueA={metricsA.avgLatency}
-            valueB={metricsB.avgLatency}
-            unit="ms"
-          />
+        {/* Variant B Stats */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-slate-800">Variant B</span>
+            <span className="text-[11px] font-mono text-slate-500">
+              {metricsB.blockedCount}/{metricsB.totalRequests} blocked
+            </span>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <StatBox label="Requests" value={metricsB.totalRequests} />
+            <StatBox
+              label="Block Rate"
+              value={`${blockRateB}%`}
+              highlight={blockRateB >= 50 ? "emerald" : "red"}
+            />
+            <StatBox label="Avg Latency" value={`${metricsB.avgLatency}ms`} />
+          </div>
         </div>
       </div>
     </div>

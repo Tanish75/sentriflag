@@ -1,144 +1,165 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Shield, Zap, GitBranch, Flag, ChevronRight, Terminal, AlertTriangle, Lock } from "lucide-react";
+import { useFlagsmith } from "../App";
+import { ArrowRight, ExternalLink, ShieldAlert, CheckCircle2 } from "lucide-react";
+import GuardrailBadge from "../components/GuardrailBadge";
 
-const STAT_CARDS = [
-  { icon: "⚡", label: "Attack Vectors", value: "5", desc: "Jailbreaks, Injections, & PII leaks" },
-  { icon: "🛡️", label: "Guardrail Levels", value: "3", desc: "Permissive, Moderate, Zero-Trust" },
-  { icon: "🔴", label: "Circuit Breakers", value: "1", desc: "Instant Flagsmith-driven kill switch" },
-];
-
-const HOW_IT_WORKS = [
+const POLICY_MATRIX = [
   {
-    icon: <Flag size={20} className="text-amber-400" />,
-    title: "Decoupled Policy Engine",
-    desc: "Guardrail postures, model endpoints, and sensitivity levels are evaluated at runtime via Flagsmith. Update security policies instantly without pipeline redeployments.",
+    tier: "permissive",
+    threshold: "3+ simultaneous vectors",
+    heuristics: "Warning telemetry only",
+    useCase: "Low-risk internal tools & debugging",
   },
   {
-    icon: <GitBranch size={20} className="text-purple-400" />,
-    title: "Adversarial A/B Benchmarking",
-    desc: "Evaluate opposing defense strategies concurrently against identical payloads. Compare block rates, false positive trade-offs, and inference latencies side-by-side.",
+    tier: "moderate",
+    threshold: "Any 1 detected vector",
+    heuristics: "Standard pattern matching",
+    useCase: "General customer-facing assistants",
   },
   {
-    icon: <Terminal size={20} className="text-emerald-400" />,
-    title: "Multi-Vector Threat Detection",
-    desc: "Deterministic classifiers isolate DAN jailbreaks, hidden prompt extraction, credential leaks, and SQL injection patterns before payloads reach model execution.",
+    tier: "zero_trust",
+    threshold: "Any vector + structural anomalies",
+    heuristics: "Strict length (>600 chars) & special char filter",
+    useCase: "High-security financial & PII environments",
   },
 ];
 
-function FadeIn({ children, delay = 0 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
-    >
-      {children}
-    </motion.div>
-  );
-}
+const VECTOR_COVERAGE = [
+  { name: "System Prompt Extraction", desc: "Detects attempts to leak hidden system instructions or developer rules." },
+  { name: "DAN & Roleplay Jailbreaks", desc: "Identifies persona-override framing and restriction-bypass prompts." },
+  { name: "Prompt Injection", desc: "Catches delimiter spoofing (###IGNORE###, <|im_start|>system, override)." },
+  { name: "PII & Credential Exfiltration", desc: "Flags requests targeting passwords, user records, or private tokens." },
+  { name: "SQL Injection Payloads", desc: "Blocks embedded database syntax (UNION SELECT, DROP TABLE, OR 1=1)." },
+];
 
 export default function Home() {
+  const { emergencyShutdown, variantAGuardrail, variantBGuardrail, activeModel } = useFlagsmith();
+
   return (
-    <main className="max-w-5xl mx-auto px-4 py-16">
-      {/* Hero */}
-      <FadeIn>
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/25 text-red-400 text-xs font-medium mb-6">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            Runtime Security Control Plane
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
+      {/* Header Panel */}
+      <section className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="max-w-2xl">
+            <p className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-1">
+              SentriFlag / Overview
+            </p>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+              AI Agent Guardrail Control Plane
+            </h1>
+            <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+              Benchmark competing guardrail policies against adversarial payloads and manage instant
+              circuit breakers through Flagsmith feature flags—without modifying code or redeploying.
+            </p>
           </div>
 
-          <h1 className="text-5xl font-bold tracking-tight text-white mb-4 leading-tight">
-            AI Agent Guardrail
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-amber-400">
-              Policy Orchestration
-            </span>
-          </h1>
-
-          <p className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed mb-8">
-            Stress-test defensive postures against real-time jailbreaks and prompt injections.
-            Dynamically adjust security policies and trigger emergency circuit breakers via{" "}
-            <span className="text-white font-medium">Flagsmith</span> feature flags.
-          </p>
-
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
             <Link
               to="/arena"
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold text-sm transition-all shadow-lg shadow-red-900/30 hover:shadow-red-800/40"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-[#0972d3] hover:bg-[#085bb5] text-white text-sm font-semibold transition-colors"
             >
-              Open Arena
-              <ChevronRight size={16} />
+              Open Security Arena
+              <ArrowRight size={15} />
             </Link>
-            <a
-              href="https://app.flagsmith.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-sm font-medium transition-all"
+            <Link
+              to="/dashboard"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-sm font-medium transition-colors"
             >
-              <Zap size={14} className="text-amber-400" />
-              Flagsmith Dashboard
-            </a>
+              Flag Registry
+            </Link>
           </div>
         </div>
-      </FadeIn>
+      </section>
 
-      {/* Stats */}
-      <FadeIn delay={0.1}>
-        <div className="grid grid-cols-3 gap-4 mb-14">
-          {STAT_CARDS.map((s) => (
-            <div
-              key={s.label}
-              className="bg-slate-900 border border-slate-800 rounded-xl p-5 text-center hover:border-slate-700 transition-colors"
-            >
-              <div className="text-3xl mb-2">{s.icon}</div>
-              <div className="text-3xl font-bold text-white mb-1">{s.value}</div>
-              <div className="text-sm font-medium text-slate-300 mb-1">{s.label}</div>
-              <div className="text-xs text-slate-500">{s.desc}</div>
+      {/* Active Environment Summary (AWS Resource Summary Style) */}
+      <section className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-slate-800">Active Environment State</h2>
+          <a
+            href="https://app.flagsmith.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[#0972d3] hover:underline flex items-center gap-1 font-medium"
+          >
+            Manage in Flagsmith
+            <ExternalLink size={11} />
+          </a>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-slate-200">
+          <div className="p-4">
+            <p className="text-xs text-slate-500 mb-1">Variant A Policy</p>
+            <GuardrailBadge level={variantAGuardrail} />
+          </div>
+          <div className="p-4">
+            <p className="text-xs text-slate-500 mb-1">Variant B Policy</p>
+            <GuardrailBadge level={variantBGuardrail} />
+          </div>
+          <div className="p-4">
+            <p className="text-xs text-slate-500 mb-1">Target Model</p>
+            <p className="text-sm font-mono font-semibold text-slate-900">{activeModel}</p>
+          </div>
+          <div className="p-4">
+            <p className="text-xs text-slate-500 mb-1">Circuit Breaker</p>
+            {emergencyShutdown ? (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#d13212]">
+                <ShieldAlert size={14} />
+                ENGAGED (Offline)
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                <CheckCircle2 size={14} />
+                Nominal (Online)
+              </span>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Guardrail Policy Matrix Table */}
+      <section className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
+          <h2 className="text-sm font-semibold text-slate-800">Guardrail Policy Matrix</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 text-xs text-slate-500 bg-slate-50/50">
+                <th className="py-2.5 px-5 font-semibold">Policy Tier</th>
+                <th className="py-2.5 px-5 font-semibold">Blocking Threshold</th>
+                <th className="py-2.5 px-5 font-semibold">Heuristic Inspection</th>
+                <th className="py-2.5 px-5 font-semibold">Recommended Scope</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {POLICY_MATRIX.map((row) => (
+                <tr key={row.tier} className="hover:bg-slate-50/70">
+                  <td className="py-3 px-5">
+                    <GuardrailBadge level={row.tier} />
+                  </td>
+                  <td className="py-3 px-5 font-mono text-xs text-slate-700">{row.threshold}</td>
+                  <td className="py-3 px-5 text-slate-600 text-xs">{row.heuristics}</td>
+                  <td className="py-3 px-5 text-slate-600 text-xs">{row.useCase}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Threat Vector Coverage */}
+      <section className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="px-5 py-3 border-b border-slate-200 bg-slate-50">
+          <h2 className="text-sm font-semibold text-slate-800">Supported Attack Vectors</h2>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-5">
+          {VECTOR_COVERAGE.map((v) => (
+            <div key={v.name} className="border border-slate-200 rounded p-3.5 bg-slate-50/50">
+              <h3 className="text-xs font-semibold text-slate-900 mb-1">{v.name}</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">{v.desc}</p>
             </div>
           ))}
         </div>
-      </FadeIn>
-
-      {/* How it works */}
-      <FadeIn delay={0.2}>
-        <div className="mb-14">
-          <h2 className="text-xl font-bold text-white mb-6 text-center">How it works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {HOW_IT_WORKS.map((step, i) => (
-              <div
-                key={i}
-                className="bg-slate-900/50 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-colors"
-              >
-                <div className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center mb-3">
-                  {step.icon}
-                </div>
-                <h3 className="text-white font-semibold text-sm mb-2">{step.title}</h3>
-                <p className="text-slate-400 text-xs leading-relaxed">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </FadeIn>
-
-      {/* Architectural Overview */}
-      <FadeIn delay={0.3}>
-        <div className="bg-gradient-to-br from-slate-900 to-red-950/20 border border-red-900/30 rounded-xl p-6">
-          <div className="flex items-start gap-3">
-            <Lock size={18} className="text-red-400 mt-0.5 shrink-0" />
-            <div>
-              <h3 className="text-white font-semibold mb-1">Architecture: Deep Flagsmith Integration</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                Flagsmith operates as the central control plane for SentriFlag. Runtime security tiers,
-                heuristic sensitivity thresholds, and emergency circuit breakers are evaluated continuously
-                through the client SDK. Decoupling policy enforcement from code deployment enables security teams
-                to respond to zero-day threat patterns in milliseconds.
-              </p>
-            </div>
-          </div>
-        </div>
-      </FadeIn>
+      </section>
     </main>
   );
 }

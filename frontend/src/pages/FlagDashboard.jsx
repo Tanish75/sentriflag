@@ -1,117 +1,46 @@
 import { useEffect, useState } from "react";
 import { useFlagsmith } from "../App";
 import { getVal, hasFlag } from "../lib/flagsmithClient";
-import { Flag, ExternalLink, RefreshCw, ToggleLeft, ToggleRight, Hash } from "lucide-react";
+import { ExternalLink, RefreshCw, Flag } from "lucide-react";
 
 const FLAG_DEFINITIONS = [
   {
     key: "agent_emergency_shutdown",
-    type: "boolean",
-    description: "Kill switch — immediately takes all AI agents offline when enabled.",
+    type: "Boolean",
+    description: "Circuit breaker — immediately halts all agent execution pipelines when enabled.",
     impact: "Critical",
   },
   {
     key: "variant_a_guardrail",
-    type: "remote_config",
-    description: 'Sets the security policy for Variant A agent. Values: "permissive", "moderate", "zero_trust"',
+    type: "Remote Config",
+    description: 'Security policy assigned to Agent Variant A ("permissive", "moderate", "zero_trust").',
     impact: "High",
   },
   {
     key: "variant_b_guardrail",
-    type: "remote_config",
-    description: 'Sets the security policy for Variant B agent. Values: "permissive", "moderate", "zero_trust"',
+    type: "Remote Config",
+    description: 'Security policy assigned to Agent Variant B ("permissive", "moderate", "zero_trust").',
     impact: "High",
   },
   {
     key: "active_model",
-    type: "remote_config",
-    description: 'AI model name shown in both agent panels. E.g. "gpt-4o-mini", "claude-3-haiku"',
+    type: "Remote Config",
+    description: 'Target LLM identifier used for latency simulation and telemetry (e.g., "gpt-4o-mini").',
     impact: "Medium",
   },
   {
     key: "jailbreak_sensitivity",
-    type: "remote_config",
-    description: "Threshold (0.0–1.0) used in jailbreak detection scoring. Higher = stricter.",
+    type: "Remote Config",
+    description: "Numeric threshold (0.0–1.0) governing heuristic threat sensitivity.",
     impact: "Medium",
   },
 ];
 
-const IMPACT_COLORS = {
-  Critical: "text-red-400 bg-red-500/10 border-red-500/30",
-  High: "text-amber-400 bg-amber-500/10 border-amber-500/30",
-  Medium: "text-blue-400 bg-blue-500/10 border-blue-500/30",
+const IMPACT_STYLES = {
+  Critical: "bg-red-50 text-red-800 border-red-200",
+  High: "bg-amber-50 text-amber-800 border-amber-200",
+  Medium: "bg-slate-100 text-slate-700 border-slate-300",
 };
-
-function FlagCard({ def, value, lastUpdated }) {
-  const isBoolean = def.type === "boolean";
-  const isActive = isBoolean ? value === true : Boolean(value);
-
-  return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition-colors">
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <Flag size={13} className="text-amber-400" />
-            <span className="font-mono text-sm text-white">{def.key}</span>
-          </div>
-          <p className="text-slate-400 text-xs leading-relaxed">{def.description}</p>
-        </div>
-
-        <div className="flex flex-col items-end gap-2 shrink-0">
-          <span
-            className={`text-xs px-2 py-0.5 rounded-full border font-medium ${IMPACT_COLORS[def.impact]}`}
-          >
-            {def.impact}
-          </span>
-          <span className="text-xs text-slate-500 uppercase tracking-wide">
-            {isBoolean ? "Boolean" : "Remote Config"}
-          </span>
-        </div>
-      </div>
-
-      {/* Value display */}
-      <div
-        className={`flex items-center gap-3 mt-3 pt-3 border-t ${
-          isBoolean && value
-            ? "border-red-800/40"
-            : "border-slate-800"
-        }`}
-      >
-        {isBoolean ? (
-          <>
-            <div
-              className={`w-10 h-5 rounded-full flex items-center transition-colors ${
-                value ? "bg-red-600" : "bg-slate-700"
-              }`}
-            >
-              <div
-                className={`w-4 h-4 rounded-full bg-white shadow transition-transform mx-0.5 ${
-                  value ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </div>
-            <span
-              className={`text-sm font-semibold ${value ? "text-red-400" : "text-slate-400"}`}
-            >
-              {value ? "ENABLED" : "disabled"}
-            </span>
-          </>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Hash size={12} className="text-slate-500" />
-            <span className="font-mono text-sm text-white bg-slate-800 px-2.5 py-1 rounded-md">
-              {value !== null && value !== undefined ? String(value) : "—"}
-            </span>
-          </div>
-        )}
-
-        <span className="ml-auto text-xs text-slate-600">
-          {lastUpdated}
-        </span>
-      </div>
-    </div>
-  );
-}
 
 export default function FlagDashboard() {
   const contextFlags = useFlagsmith();
@@ -131,7 +60,6 @@ export default function FlagDashboard() {
 
   useEffect(() => {
     setLiveValues(readAllFlags());
-    // Auto-refresh every 3 seconds
     const interval = setInterval(() => {
       setLiveValues(readAllFlags());
       setLastRefresh(new Date());
@@ -143,7 +71,7 @@ export default function FlagDashboard() {
     setRefreshing(true);
     setLiveValues(readAllFlags());
     setLastRefresh(new Date());
-    setTimeout(() => setRefreshing(false), 500);
+    setTimeout(() => setRefreshing(false), 400);
   }
 
   const displayValues = liveValues || {
@@ -155,78 +83,111 @@ export default function FlagDashboard() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
+    <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-1">Control Plane Observability</h1>
-          <p className="text-slate-400 text-sm">
-            Real-time state synchronization with Flagsmith feature registry
+          <p className="text-xs font-mono text-slate-500 uppercase tracking-wider mb-1">
+            SentriFlag / Flag Registry
+          </p>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+            Flagsmith Configuration Registry
+          </h1>
+          <p className="text-slate-600 text-xs mt-1">
+            Live feature flags and remote config values synchronized every 3 seconds.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500">
-            Last refresh: {lastRefresh.toLocaleTimeString()}
+
+        <div className="flex items-center gap-2.5 shrink-0">
+          <span className="text-xs font-mono text-slate-500 mr-1">
+            Synced {lastRefresh.toLocaleTimeString()}
           </span>
           <button
             onClick={manualRefresh}
-            className={`p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-all ${
-              refreshing ? "animate-spin" : ""
-            }`}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-medium transition-colors"
           >
-            <RefreshCw size={14} />
+            <RefreshCw size={13} className={refreshing ? "animate-spin" : ""} />
+            Refresh
           </button>
           <a
             href="https://app.flagsmith.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-medium hover:bg-amber-500/15 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#0972d3] hover:bg-[#085bb5] text-white text-xs font-semibold transition-colors"
           >
+            Edit in Flagsmith
             <ExternalLink size={12} />
-            Open Flagsmith
           </a>
         </div>
       </div>
 
-      {/* Live indicator */}
-      <div className="flex items-center gap-2 mb-6">
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-        <span className="text-xs text-slate-400">
-          Active Flagsmith client subscription: Remote updates synchronize with zero client reload
-        </span>
+      {/* Registry Table */}
+      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-slate-200 bg-slate-50 text-xs text-slate-600">
+                <th className="py-3 px-5 font-semibold">Feature Key</th>
+                <th className="py-3 px-4 font-semibold">Type</th>
+                <th className="py-3 px-4 font-semibold">Current Value</th>
+                <th className="py-3 px-4 font-semibold">Impact</th>
+                <th className="py-3 px-5 font-semibold">Description</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200">
+              {FLAG_DEFINITIONS.map((def) => {
+                const val = displayValues[def.key];
+                const isBool = def.type === "Boolean";
+                return (
+                  <tr key={def.key} className="hover:bg-slate-50/70">
+                    <td className="py-3.5 px-5 font-mono text-xs font-semibold text-slate-900 whitespace-nowrap">
+                      <div className="flex items-center gap-2">
+                        <Flag size={12} className="text-[#0972d3]" />
+                        {def.key}
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-xs text-slate-600 whitespace-nowrap">
+                      {def.type}
+                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      {isBool ? (
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-mono font-semibold border ${
+                            val
+                              ? "bg-red-50 text-red-800 border-red-200"
+                              : "bg-slate-100 text-slate-600 border-slate-300"
+                          }`}
+                        >
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full ${
+                              val ? "bg-red-600" : "bg-slate-400"
+                            }`}
+                          />
+                          {val ? "TRUE (Active)" : "FALSE"}
+                        </span>
+                      ) : (
+                        <span className="font-mono text-xs bg-slate-100 border border-slate-300 text-slate-800 px-2 py-0.5 rounded">
+                          {val !== null && val !== undefined ? String(val) : "—"}
+                        </span>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded border text-xs font-medium ${IMPACT_STYLES[def.impact]}`}
+                      >
+                        {def.impact}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-5 text-xs text-slate-600 max-w-md">
+                      {def.description}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
-
-      {/* Flag cards */}
-      <div className="grid gap-4">
-        {FLAG_DEFINITIONS.map((def) => (
-          <FlagCard
-            key={def.key}
-            def={def}
-            value={displayValues[def.key]}
-            lastUpdated={lastRefresh.toLocaleTimeString()}
-          />
-        ))}
-      </div>
-
-      {/* Footer note */}
-      <div className="mt-8 p-4 rounded-xl bg-slate-900/50 border border-slate-800">
-        <p className="text-slate-400 text-xs leading-relaxed text-center">
-          Configuration adjustments made within the{" "}
-          <a
-            href="https://app.flagsmith.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-amber-400 hover:underline"
-          >
-            Flagsmith Console
-          </a>{" "}
-          propagate to live evaluation pipelines instantly, adjusting security postures in the{" "}
-          <a href="#/arena" className="text-red-400 hover:underline">
-            Security Arena
-          </a>{" "}
-          without application recompilation or redeployment.
-        </p>
-      </div>
-    </div>
+    </main>
   );
 }

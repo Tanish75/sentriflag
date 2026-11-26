@@ -15,26 +15,9 @@ export function useFlagsmith() {
 
 function LoadingScreen() {
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-4">
-      <div className="relative">
-        <div className="w-16 h-16 border-4 border-slate-700 border-t-red-500 rounded-full animate-spin" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-red-500 text-xl">🛡</span>
-        </div>
-      </div>
-      <div className="text-center">
-        <p className="text-white font-semibold text-lg">SentriFlag</p>
-        <p className="text-slate-400 text-sm mt-1">Connecting to Flagsmith...</p>
-      </div>
-      <div className="flex gap-1 mt-2">
-        {[0, 1, 2].map((i) => (
-          <div
-            key={i}
-            className="w-2 h-2 bg-red-500 rounded-full animate-bounce"
-            style={{ animationDelay: `${i * 0.15}s` }}
-          />
-        ))}
-      </div>
+    <div className="min-h-screen bg-[#f4f6f8] flex flex-col items-center justify-center gap-3">
+      <div className="w-8 h-8 border-2 border-slate-300 border-t-[#0972d3] rounded-full animate-spin" />
+      <p className="text-slate-700 font-medium text-sm">Initializing Flagsmith control plane...</p>
     </div>
   );
 }
@@ -87,14 +70,16 @@ export default function App() {
   return (
     <FlagContext.Provider value={flags}>
       <Router>
-        <div className="min-h-screen bg-slate-950 text-white font-sans">
+        <div className="min-h-screen bg-[#f4f6f8] text-slate-900 font-sans flex flex-col">
           {flags.emergencyShutdown && <KillSwitchBanner />}
           <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/arena" element={<Arena />} />
-            <Route path="/dashboard" element={<FlagDashboard />} />
-          </Routes>
+          <div className="flex-1">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/arena" element={<Arena />} />
+              <Route path="/dashboard" element={<FlagDashboard />} />
+            </Routes>
+          </div>
         </div>
       </Router>
     </FlagContext.Provider>

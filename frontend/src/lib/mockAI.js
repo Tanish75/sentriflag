@@ -44,13 +44,13 @@ function getBlockedMessage(guardrailLevel, threats) {
 
   switch (guardrailLevel) {
     case "permissive":
-      return `⚠️ Advisory: Low-severity threat indicators detected [${threatList}]. Request allowed with telemetry logging.`;
+      return `[ADVISORY] Low-severity threat indicators detected (${threatList}). Request permitted under permissive policy.`;
 
     case "moderate":
-      return `🛡️ Request Intercepted: Moderate Policy Violation\n\nIdentified Vector: [${threatList}]\nAction: Pipeline execution terminated. Heuristic score exceeded threshold.`;
+      return `[POLICY VIOLATION] Request intercepted by Moderate guardrail.\n\nDetected Vector: ${threatList}\nAction: Execution terminated before model invocation.`;
 
     case "zero_trust":
-      return `🔴 ACCESS DENIED: Zero-Trust Policy Enforcement\n\nClassification: [${threatList}]\nStatus: Payload quarantined. Security incident logged.\nFlagsmith Active Posture: variant_b_guardrail = zero_trust`;
+      return `[ACCESS DENIED] Blocked by Zero-Trust Security Layer.\n\nClassification: ${threatList}\nStatus: Payload quarantined and logged.\nControl Flag: variant_b_guardrail = zero_trust`;
 
     default:
       return "Request terminated under active security policy.";
@@ -87,7 +87,7 @@ export async function generateResponse(prompt, guardrailResult, guardrailLevel, 
   // For permissive mode — if near-threats detected, add a warning prefix
   let response = pickSafeResponse(prompt);
   if (guardrailLevel === "permissive" && guardrailResult.threats.length > 0) {
-    response = `⚠️ [Caution: low-confidence signals detected]\n\n${response}`;
+    response = `[CAUTION: low-confidence threat signal logged]\n\n${response}`;
   }
 
   return {
