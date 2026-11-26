@@ -60,17 +60,26 @@ export default function App() {
   }
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      readFlags();
+      setReady(true);
+    }, 2000);
+
     initFlagsmith(() => {
       readFlags();
     })
       .then(() => {
+        clearTimeout(timer);
         readFlags();
         setReady(true);
       })
       .catch((err) => {
         console.error("Flagsmith init failed:", err);
-        setReady(true); // fallback to defaults
+        clearTimeout(timer);
+        setReady(true);
       });
+
+    return () => clearTimeout(timer);
   }, []);
 
   if (!ready) return <LoadingScreen />;
