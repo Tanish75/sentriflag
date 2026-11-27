@@ -101,6 +101,24 @@ Open `http://localhost:3000`
 
 ---
 
+## Self-Hosted Flagsmith (Docker)
+
+SentriFlag also supports **self-hosted open-source Flagsmith** out of the box using Docker Compose:
+
+1. Start Flagsmith + PostgreSQL locally from the repo root:
+   ```bash
+   docker compose up -d
+   ```
+2. Open `http://localhost:8000`, create a project/environment, and copy your **Environment Key**.
+3. Create `frontend/.env.local`:
+   ```env
+   VITE_FLAGSMITH_ENV_KEY=your-local-environment-key
+   VITE_FLAGSMITH_API_URL=http://localhost:8000/api/v1/
+   ```
+4. Start SentriFlag (`cd frontend && npm run dev`) — all guardrail flags and kill-switches now run 100% locally on your self-hosted Flagsmith instance.
+
+---
+
 ## Demo Walkthrough
 
 1. Go to **Arena** — two agent panels side by side

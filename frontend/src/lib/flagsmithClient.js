@@ -1,10 +1,12 @@
 import flagsmith from '@flagsmith/flagsmith';
 
-const ENV_KEY = 'FvQtv7AjNQt7uz338VJ6Yg';
+const ENV_KEY = import.meta.env.VITE_FLAGSMITH_ENV_KEY || 'FvQtv7AjNQt7uz338VJ6Yg';
+const API_URL = import.meta.env.VITE_FLAGSMITH_API_URL || undefined;
 
 export const initFlagsmith = (onChange) =>
   flagsmith.init({
     environmentID: ENV_KEY,
+    ...(API_URL ? { api: API_URL } : {}),
     onChange,
     cacheFlags: false,
     enableLogs: false
