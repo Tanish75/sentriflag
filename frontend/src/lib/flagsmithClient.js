@@ -3,6 +3,11 @@ import flagsmith from '@flagsmith/flagsmith';
 const ENV_KEY = import.meta.env.VITE_FLAGSMITH_ENV_KEY || 'FvQtv7AjNQt7uz338VJ6Yg';
 const API_URL = import.meta.env.VITE_FLAGSMITH_API_URL || undefined;
 
+export const isSelfHosted = Boolean(API_URL);
+export const FLAGSMITH_CONSOLE_URL = API_URL
+  ? API_URL.replace(/\/api\/v1\/?$/, '')
+  : 'https://app.flagsmith.com';
+
 export const initFlagsmith = (onChange) =>
   flagsmith.init({
     environmentID: ENV_KEY,

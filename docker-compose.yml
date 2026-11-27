@@ -24,6 +24,23 @@ services:
       ENV: prod
     ports:
       - "8000:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/health/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  sentriflag-ui:
+    build:
+      context: ./frontend
+      args:
+        VITE_FLAGSMITH_API_URL: http://localhost:8000/api/v1/
+        VITE_FLAGSMITH_ENV_KEY: ${VITE_FLAGSMITH_ENV_KEY:-FvQtv7AjNQt7uz338VJ6Yg}
+    depends_on:
+      flagsmith:
+        condition: service_healthy
+    ports:
+      - "3000:80"
 
 volumes:
   pgdata:

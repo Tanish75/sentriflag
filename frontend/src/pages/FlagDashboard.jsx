@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useFlagsmith } from "../App";
-import { getVal, hasFlag, refreshFlags } from "../lib/flagsmithClient";
+import { getVal, hasFlag, refreshFlags, FLAGSMITH_CONSOLE_URL, isSelfHosted } from "../lib/flagsmithClient";
 import { ExternalLink, RefreshCw, Flag } from "lucide-react";
 
 const FLAG_DEFINITIONS = [
@@ -95,7 +95,11 @@ export default function FlagDashboard() {
             Flagsmith Configuration Registry
           </h1>
           <p className="text-slate-600 text-xs mt-1">
-            Live feature flags and remote config values synchronized every 3 seconds.
+            Live feature flags and remote config values synchronized every 3 seconds (
+            <span className="font-mono font-semibold text-slate-700">
+              {isSelfHosted ? `Self-Hosted: ${FLAGSMITH_CONSOLE_URL}` : "Flagsmith Cloud"}
+            </span>
+            ).
           </p>
         </div>
 
@@ -111,7 +115,7 @@ export default function FlagDashboard() {
             Refresh
           </button>
           <a
-            href="https://app.flagsmith.com"
+            href={FLAGSMITH_CONSOLE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#0972d3] hover:bg-[#085bb5] text-white text-xs font-semibold transition-colors"

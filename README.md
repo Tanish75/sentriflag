@@ -101,21 +101,24 @@ Open `http://localhost:3000`
 
 ---
 
-## Self-Hosted Flagsmith (Docker)
+## Self-Hosted Flagsmith (Docker + Zero-Config Bootstrapper)
 
-SentriFlag also supports **self-hosted open-source Flagsmith** out of the box using Docker Compose:
+SentriFlag includes a full **self-hosted open-source Flagsmith** stack (`docker-compose.yml` + `scripts/bootstrap-selfhosted.mjs`) so any developer can spin up Flagsmith + PostgreSQL + SentriFlag locally with zero manual flag setup:
 
-1. Start Flagsmith + PostgreSQL locally from the repo root:
+1. Start Flagsmith + PostgreSQL:
    ```bash
-   docker compose up -d
+   docker compose up -d postgres flagsmith
    ```
-2. Open `http://localhost:8000`, create a project/environment, and copy your **Environment Key**.
-3. Create `frontend/.env.local`:
-   ```env
-   VITE_FLAGSMITH_ENV_KEY=your-local-environment-key
-   VITE_FLAGSMITH_API_URL=http://localhost:8000/api/v1/
+2. Run the zero-config bootstrapper (waits for `/health/`, creates admin, project, environment, all 5 guardrail flags, and writes `frontend/.env.local`):
+   ```bash
+   node scripts/bootstrap-selfhosted.mjs
    ```
-4. Start SentriFlag (`cd frontend && npm run dev`) — all guardrail flags and kill-switches now run 100% locally on your self-hosted Flagsmith instance.
+3. Start SentriFlag (either locally or in Docker):
+   ```bash
+   cd frontend && npm run dev
+   # or: docker compose up -d --build sentriflag-ui
+   ```
+4. Open `http://localhost:3000` — the UI automatically detects `VITE_FLAGSMITH_API_URL`, shows **Self-Hosted Synced**, and points console links to `http://localhost:8000`.
 
 ---
 

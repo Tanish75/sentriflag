@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { Shield, ExternalLink } from "lucide-react";
 import { useFlagsmith } from "../App";
+import { FLAGSMITH_CONSOLE_URL, isSelfHosted } from "../lib/flagsmithClient";
 
 export default function Navbar() {
   const location = useLocation();
@@ -56,11 +57,17 @@ export default function Navbar() {
                 emergencyShutdown ? "bg-red-500 animate-pulse" : "bg-emerald-400"
               }`}
             />
-            <span>{emergencyShutdown ? "Circuit Open" : "Flagsmith Synced"}</span>
+            <span>
+              {emergencyShutdown
+                ? "Circuit Open"
+                : isSelfHosted
+                  ? "Self-Hosted Synced"
+                  : "Flagsmith Synced"}
+            </span>
           </div>
 
           <a
-            href="https://app.flagsmith.com"
+            href={FLAGSMITH_CONSOLE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-1 rounded bg-[#0972d3] hover:bg-[#085bb5] text-white text-xs font-semibold transition-colors"
